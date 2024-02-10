@@ -15,6 +15,7 @@ const ESC_ESC: u8 = 0xDD;
 pub struct SlipEncoder<const MAX_LENGTH: usize>(Vec<u8, MAX_LENGTH>);
 
 impl<const MAX_LENGTH: usize> SlipEncoder<MAX_LENGTH> {
+    #[inline]
     pub fn new(array: Vec<u8, MAX_LENGTH>) -> Self {
         Self { 0: array }
     }
