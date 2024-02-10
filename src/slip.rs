@@ -16,7 +16,7 @@ pub struct SlipEncoder<const MAX_LENGTH: usize>(Vec<u8, MAX_LENGTH>);
 
 impl<const MAX_LENGTH: usize> SlipEncoder<MAX_LENGTH> {
     pub fn new(array: Vec<u8, MAX_LENGTH>) -> Self {
-        Self {0: array}
+        Self { 0: array }
     }
 
     pub fn encode(mut self) -> Result<Vec<u8, MAX_LENGTH>, ()> {
@@ -88,6 +88,9 @@ mod tests {
         let result = slip.encode();
 
         assert!(result.is_ok());
-        assert_eq!(*result.unwrap(), [END, ESC, ESC_END, ESC, ESC_ESC, ESC_END, ESC_ESC, END]);
+        assert_eq!(
+            *result.unwrap(),
+            [END, ESC, ESC_END, ESC, ESC_ESC, ESC_END, ESC_ESC, END]
+        );
     }
 }
