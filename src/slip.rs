@@ -118,13 +118,16 @@ impl<const MAX_LENGTH: usize> SlipDecoder<MAX_LENGTH> {
         self.buffer.clear();
     }
 
+    #[inline]
     #[must_use]
-    pub fn get_buffer(&self) -> Option<&[u8]> {
-        if self.state == SlipDecoderState::End {
-            Some(&self.buffer)
-        } else {
-            None
-        }
+    pub fn is_buffer_completed(&self) -> bool {
+        self.state == SlipDecoderState::End
+    }
+
+    #[inline]
+    #[must_use]
+    pub fn get_buffer(&self) -> &[u8] {
+        &self.buffer
     }
 }
 
@@ -205,9 +208,9 @@ mod tests {
         assert!(result.is_ok());
         assert_eq!(slip_decoder.state, SlipDecoderState::End);
 
-        let buffer: Option<&[u8]> = slip_decoder.get_buffer();
-        let expected_buffer: [u8; 1] = [0x00];
-        assert_eq!(buffer, Some(&expected_buffer as &[u8]));
+        assert!(slip_decoder.is_buffer_completed());
+
+        assert_eq!(slip_decoder.get_buffer(), &[0x00]);
     }
 
     #[test]
@@ -256,9 +259,12 @@ mod tests {
         assert!(result.is_ok());
         assert_eq!(slip_decoder.state, SlipDecoderState::End);
 
-        let buffer: Option<&[u8]> = slip_decoder.get_buffer();
-        let expected_buffer: [u8; 6] = [END_CHAR, ESC_CHAR, ESC_CHAR, ESC_CHAR, ESC_CHAR, 0x00];
-        assert_eq!(buffer, Some(&expected_buffer as &[u8]));
+        assert!(slip_decoder.is_buffer_completed());
+
+        assert_eq!(
+            slip_decoder.get_buffer(),
+            &[END_CHAR, ESC_CHAR, ESC_CHAR, ESC_CHAR, ESC_CHAR, 0x00]
+        );
     }
 
     #[test]
@@ -275,9 +281,9 @@ mod tests {
         assert!(result.is_ok());
         assert_eq!(slip_decoder.state, SlipDecoderState::End);
 
-        let buffer: Option<&[u8]> = slip_decoder.get_buffer();
-        let expected_buffer: [u8; 0] = [];
-        assert_eq!(buffer, Some(&expected_buffer as &[u8]));
+        assert!(slip_decoder.is_buffer_completed());
+
+        assert_eq!(slip_decoder.get_buffer(), &[]);
     }
 
     #[test]
@@ -298,13 +304,13 @@ mod tests {
         assert!(result.is_ok());
         assert_eq!(slip_decoder.state, SlipDecoderState::End);
 
-        let buffer: Option<&[u8]> = slip_decoder.get_buffer();
-        let expected_buffer: [u8; 1] = [0x00];
-        assert_eq!(buffer, Some(&expected_buffer as &[u8]));
+        assert!(slip_decoder.is_buffer_completed());
+
+        assert_eq!(slip_decoder.get_buffer(), &[0x00]);
 
         slip_decoder.reset();
         assert_eq!(slip_decoder.state, SlipDecoderState::Start);
-        assert_eq!(slip_decoder.get_buffer(), None);
+        assert!(!slip_decoder.is_buffer_completed());
     }
 
     #[test]
