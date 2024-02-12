@@ -97,17 +97,16 @@ impl<const MAX_LENGTH: usize> SlipDecoder<MAX_LENGTH> {
                 match value {
                     ESC_END_CHAR => {
                         self.buffer.push(END_CHAR)?;
+
+                        Ok(())
                     }
                     ESC_ESC_CHAR => {
                         self.buffer.push(ESC_CHAR)?;
-                    }
-                    _ => {
-                        self.buffer.push(ESC_CHAR)?;
-                        self.buffer.push(value)?;
-                    }
-                }
 
-                Ok(())
+                        Ok(())
+                    }
+                    _ => Err(()),
+                }
             }
             SlipDecoderState::End => Err(()),
         }
@@ -239,32 +238,31 @@ mod tests {
         assert!(result.is_ok());
         assert_eq!(slip_decoder.state, SlipDecoderState::Append);
 
-        let result = slip_decoder.insert(ESC_CHAR);
-        assert!(result.is_ok());
-        assert_eq!(slip_decoder.state, SlipDecoderState::Escape);
-
-        let result = slip_decoder.insert(ESC_CHAR);
-        assert!(result.is_ok());
-        assert_eq!(slip_decoder.state, SlipDecoderState::Append);
-
-        let result = slip_decoder.insert(ESC_CHAR);
-        assert!(result.is_ok());
-        assert_eq!(slip_decoder.state, SlipDecoderState::Escape);
-
-        let result = slip_decoder.insert(0);
-        assert!(result.is_ok());
-        assert_eq!(slip_decoder.state, SlipDecoderState::Append);
-
         let result = slip_decoder.insert(END_CHAR);
         assert!(result.is_ok());
         assert_eq!(slip_decoder.state, SlipDecoderState::End);
 
         assert!(slip_decoder.is_buffer_completed());
 
-        assert_eq!(
-            slip_decoder.get_buffer(),
-            &[END_CHAR, ESC_CHAR, ESC_CHAR, ESC_CHAR, ESC_CHAR, 0x00]
-        );
+        assert_eq!(slip_decoder.get_buffer(), &[END_CHAR, ESC_CHAR]);
+    }
+
+    #[test]
+    fn test_decode_with_bad_escape_character() {
+        let mut slip_decoder = SlipDecoder::<1>::default();
+
+        assert_eq!(slip_decoder.state, SlipDecoderState::Start);
+
+        let result = slip_decoder.insert(END_CHAR);
+        assert!(result.is_ok());
+        assert_eq!(slip_decoder.state, SlipDecoderState::Append);
+
+        let result = slip_decoder.insert(ESC_CHAR);
+        assert!(result.is_ok());
+        assert_eq!(slip_decoder.state, SlipDecoderState::Escape);
+
+        let result = slip_decoder.insert(0x00);
+        assert!(result.is_err());
     }
 
     #[test]
