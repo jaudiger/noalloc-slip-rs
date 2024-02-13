@@ -21,6 +21,7 @@ impl<const MAX_LENGTH: usize> SlipEncoder<MAX_LENGTH> {
         Self(array)
     }
 
+    #[allow(clippy::result_unit_err)]
     pub fn encode(mut self) -> Result<Vec<u8, MAX_LENGTH>, ()> {
         // Begin the SLIP frame
         self.0.insert(0, END_CHAR)?;
@@ -67,6 +68,7 @@ pub struct SlipDecoder<const MAX_LENGTH: usize> {
 }
 
 impl<const MAX_LENGTH: usize> SlipDecoder<MAX_LENGTH> {
+    #[allow(clippy::result_unit_err)]
     pub fn insert(&mut self, value: u8) -> Result<(), ()> {
         match self.state {
             SlipDecoderState::Start => {
