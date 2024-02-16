@@ -15,7 +15,6 @@ const ESC_ESC_CHAR: u8 = 0xDD;
 pub struct SlipEncoder<const MAX_LENGTH: usize>(Vec<u8, MAX_LENGTH>);
 
 impl<const MAX_LENGTH: usize> SlipEncoder<MAX_LENGTH> {
-    #[inline]
     #[must_use]
     pub const fn new(array: Vec<u8, MAX_LENGTH>) -> Self {
         Self(array)
@@ -119,13 +118,11 @@ impl<const MAX_LENGTH: usize> SlipDecoder<MAX_LENGTH> {
         self.buffer.clear();
     }
 
-    #[inline]
     #[must_use]
     pub fn is_buffer_completed(&self) -> bool {
         self.state == SlipDecoderState::End
     }
 
-    #[inline]
     #[must_use]
     pub fn get_buffer(&self) -> &[u8] {
         &self.buffer
