@@ -12,30 +12,25 @@ const ESC_CHAR: u8 = 0xDB;
 const ESC_END_CHAR: u8 = 0xDC;
 const ESC_ESC_CHAR: u8 = 0xDD;
 
-pub struct SlipEncoder<const MAX_LENGTH: usize>(Vec<u8, MAX_LENGTH>);
+pub struct SlipEncoder;
 
-impl<const MAX_LENGTH: usize> SlipEncoder<MAX_LENGTH> {
-    #[must_use]
-    pub const fn new(array: Vec<u8, MAX_LENGTH>) -> Self {
-        Self(array)
-    }
-
+impl SlipEncoder {
     #[allow(clippy::result_unit_err)]
-    pub fn encode(mut self) -> Result<Vec<u8, MAX_LENGTH>, ()> {
+    pub fn encode<const MAX_LENGTH: usize>(vec: &mut Vec<u8, MAX_LENGTH>) -> Result<(), ()> {
         // Begin the SLIP frame
-        self.0.insert(0, END_CHAR)?;
+        vec.insert(0, END_CHAR)?;
 
         let mut index = 1;
-        while index < self.0.len() {
-            match self.0[index] {
+        while index < vec.len() {
+            match vec[index] {
                 END_CHAR => {
-                    self.0.insert(index, ESC_CHAR)?;
-                    self.0.write(index + 1, ESC_END_CHAR)?;
+                    vec.insert(index, ESC_CHAR)?;
+                    vec.write(index + 1, ESC_END_CHAR)?;
                     index += 2;
                 }
                 ESC_CHAR => {
-                    self.0.insert(index, ESC_CHAR)?;
-                    self.0.write(index + 1, ESC_ESC_CHAR)?;
+                    vec.insert(index, ESC_CHAR)?;
+                    vec.write(index + 1, ESC_ESC_CHAR)?;
                     index += 2;
                 }
                 _ => {
@@ -45,9 +40,9 @@ impl<const MAX_LENGTH: usize> SlipEncoder<MAX_LENGTH> {
         }
 
         // End the SLIP frame
-        self.0.insert(self.0.len(), END_CHAR)?;
+        vec.insert(vec.len(), END_CHAR)?;
 
-        Ok(self.0)
+        Ok(())
     }
 }
 
@@ -142,39 +137,33 @@ mod tests {
 
     #[test]
     fn test_encode() {
-        let array = Vec::<u8, 12>::from([0x00, 0x01, 0x02, 0x03]);
-        let slip_encoder = SlipEncoder::new(array);
+        let mut array = Vec::<u8, 12>::from([0x00, 0x01, 0x02, 0x03]);
 
-        let result = slip_encoder.encode();
+        let result = SlipEncoder::encode(&mut array);
 
         assert!(result.is_ok());
-        assert_eq!(
-            *result.unwrap(),
-            [END_CHAR, 0x00, 0x01, 0x02, 0x03, END_CHAR]
-        );
+        assert_eq!(*array, [END_CHAR, 0x00, 0x01, 0x02, 0x03, END_CHAR]);
     }
 
     #[test]
     fn test_encode_empty() {
-        let array = Vec::<u8, 12>::new();
-        let slip_encoder = SlipEncoder::new(array);
+        let mut array = Vec::<u8, 12>::new();
 
-        let result = slip_encoder.encode();
+        let result = SlipEncoder::encode(&mut array);
 
         assert!(result.is_ok());
-        assert_eq!(*result.unwrap(), [END_CHAR, END_CHAR]);
+        assert_eq!(*array, [END_CHAR, END_CHAR]);
     }
 
     #[test]
     fn test_encode_with_escape_characters() {
-        let array = Vec::<u8, 12>::from([END_CHAR, ESC_CHAR, ESC_END_CHAR, ESC_ESC_CHAR]);
-        let slip_encoder = SlipEncoder::new(array);
+        let mut array = Vec::<u8, 12>::from([END_CHAR, ESC_CHAR, ESC_END_CHAR, ESC_ESC_CHAR]);
 
-        let result = slip_encoder.encode();
+        let result = SlipEncoder::encode(&mut array);
 
         assert!(result.is_ok());
         assert_eq!(
-            *result.unwrap(),
+            *array,
             [
                 END_CHAR,
                 ESC_CHAR,
