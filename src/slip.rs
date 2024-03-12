@@ -5,6 +5,8 @@
  *
  */
 
+use core::ops::Deref;
+
 use crate::vec::Vec;
 
 const END_CHAR: u8 = 0xC0;
@@ -119,8 +121,19 @@ impl<const MAX_LENGTH: usize> SlipDecoder<MAX_LENGTH> {
     }
 
     #[must_use]
-    pub fn get_buffer(&self) -> &[u8] {
-        &self.buffer
+    pub const fn get_buffer(&self) -> &[u8] {
+        self.buffer.as_slice()
+    }
+}
+
+// Deref to get the internal buffer.
+//
+// To deref in a const context, `SlipDecoder::get_buffer` can be directly called
+impl<const MAX_LENGTH: usize> Deref for SlipDecoder<MAX_LENGTH> {
+    type Target = [u8];
+
+    fn deref(&self) -> &Self::Target {
+        self.get_buffer()
     }
 }
 
