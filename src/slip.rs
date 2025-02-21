@@ -139,13 +139,13 @@ impl<const MAX_LENGTH: usize> Deref for SlipDecoder<MAX_LENGTH> {
 
 #[cfg(test)]
 mod tests {
-    use crate::slip::SlipDecoder;
-    use crate::slip::SlipDecoderState;
-    use crate::slip::SlipEncoder;
     use crate::slip::END_CHAR;
     use crate::slip::ESC_CHAR;
     use crate::slip::ESC_END_CHAR;
     use crate::slip::ESC_ESC_CHAR;
+    use crate::slip::SlipDecoder;
+    use crate::slip::SlipDecoderState;
+    use crate::slip::SlipEncoder;
     use crate::vec::Vec;
 
     #[test]
