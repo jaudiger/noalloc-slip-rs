@@ -1,0 +1,26 @@
+[package]
+name = "noalloc-slip-rs"
+version = "0.1.0"
+authors = ["Jérémy Audiger", "Kamel Azira"]
+edition = "2024"
+rust-version = "1.88"
+
+[dependencies]
+noalloc-vec-rs = { git = "https://github.com/jaudiger/noalloc-vec-rs.git", rev = "ade87201123c81b12340a15eca8d194f89025b4d" }
+
+[lints.clippy]
+all = { level = "warn", priority = -1 }
+nursery = { level = "warn", priority = -1 }
+pedantic = { level = "warn", priority = -1 }
+missing_errors_doc = "allow"
+
+[profile.dev]
+split-debuginfo = "unpacked"
+
+[profile.release]
+codegen-units = 1
+lto = true
+incremental = false
+opt-level = "z"
+panic = "abort"
+strip = "symbols"

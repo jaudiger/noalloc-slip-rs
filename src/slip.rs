@@ -1,22 +1,36 @@
 /*
  *
- * Copyright (c) 2024.
+ * Copyright (c) 2025.
  * All rights reserved.
  *
  */
 
 use core::ops::Deref;
 
-use crate::vec::Vec;
+use noalloc_vec_rs::vec::Vec;
 
-const END_CHAR: u8 = 0xC0;
-const ESC_CHAR: u8 = 0xDB;
-const ESC_END_CHAR: u8 = 0xDC;
-const ESC_ESC_CHAR: u8 = 0xDD;
+pub const END_CHAR: u8 = 0xC0;
+pub const ESC_CHAR: u8 = 0xDB;
+pub const ESC_END_CHAR: u8 = 0xDC;
+pub const ESC_ESC_CHAR: u8 = 0xDD;
 
+/// A SLIP encoder.
+///
+/// This struct provides a method to encode a packet using the SLIP protocol.
 pub struct SlipEncoder;
 
 impl SlipEncoder {
+    /// Takes a reference to a Vec and encodes it in place.
+    /// The Vec must have enough capacity to hold the encoded packet.
+    ///
+    /// # Arguments
+    ///
+    /// * `vec` - A reference to a Vec containing the packet to encode.
+    ///
+    /// # Returns
+    ///
+    /// * `Ok(())` if the packet was encoded successfully.
+    /// * `Err(())` if the packet could not be encoded.
     #[allow(clippy::result_unit_err)]
     pub fn encode<const MAX_LENGTH: usize>(vec: &mut Vec<u8, MAX_LENGTH>) -> Result<(), ()> {
         // Begin the SLIP frame
@@ -48,22 +62,42 @@ impl SlipEncoder {
     }
 }
 
+/// The state of the SLIP decoder.
 #[derive(Debug, Default, PartialEq)]
 enum SlipDecoderState {
+    /// The decoder is waiting for the start of a packet.
     #[default]
     Start,
+    /// The decoder has reached the end of a packet.
     End,
+    /// The decoder is appending bytes to the packet.
     Append,
+    /// The decoder has encountered an escape character.
     Escape,
 }
 
+/// A SLIP decoder.
+///
+/// This struct provides methods to decode a packet using the SLIP protocol.
 #[derive(Default)]
 pub struct SlipDecoder<const MAX_LENGTH: usize> {
+    /// The current state of the decoder.
     state: SlipDecoderState,
+    /// The buffer containing the decoded packet.
     buffer: Vec<u8, MAX_LENGTH>,
 }
 
 impl<const MAX_LENGTH: usize> SlipDecoder<MAX_LENGTH> {
+    /// Takes a byte and inserts it into the decoder.
+    ///
+    /// # Arguments
+    ///
+    /// * `value` - The byte to insert.
+    ///
+    /// # Returns
+    ///
+    /// * `Ok(())` if the byte was inserted successfully.
+    /// * `Err(())` if the byte could not be inserted.
     #[allow(clippy::result_unit_err)]
     pub fn insert(&mut self, value: u8) -> Result<(), ()> {
         match self.state {
@@ -110,25 +144,35 @@ impl<const MAX_LENGTH: usize> SlipDecoder<MAX_LENGTH> {
         }
     }
 
+    /// Resets the decoder to its initial state.
     pub fn reset(&mut self) {
         self.state = SlipDecoderState::Start;
         self.buffer.clear();
     }
 
+    /// Returns true if the decoder has reached the end of a packet.
+    ///
+    /// # Returns
+    ///
+    /// * `true` if the buffer is completed.
+    /// * `false` otherwise.
     #[must_use]
     pub fn is_buffer_completed(&self) -> bool {
         self.state == SlipDecoderState::End
     }
 
+    /// Returns a reference to the buffer containing the decoded packet.
+    ///
+    /// # Returns
+    ///
+    /// * A reference to the buffer.
     #[must_use]
     pub const fn get_buffer(&self) -> &[u8] {
         self.buffer.as_slice()
     }
 }
 
-// Deref to get the internal buffer.
-//
-// To deref in a const context, `SlipDecoder::get_buffer` can be directly called
+/// Deref to get the internal buffer.
 impl<const MAX_LENGTH: usize> Deref for SlipDecoder<MAX_LENGTH> {
     type Target = [u8];
 
@@ -146,7 +190,7 @@ mod tests {
     use crate::slip::SlipDecoder;
     use crate::slip::SlipDecoderState;
     use crate::slip::SlipEncoder;
-    use crate::vec::Vec;
+    use noalloc_vec_rs::vec::Vec;
 
     #[test]
     fn test_encode() {
