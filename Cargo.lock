@@ -12,4 +12,4 @@ dependencies = [
 [[package]]
 name = "noalloc-vec-rs"
 version = "0.1.0"
-source = "git+https://github.com/jaudiger/noalloc-vec-rs.git?rev=ade87201123c81b12340a15eca8d194f89025b4d#ade87201123c81b12340a15eca8d194f89025b4d"
+source = "git+https://github.com/jaudiger/noalloc-vec-rs.git?rev=69b78d5e9545cca37d26706700a1742cf25a61dc#69b78d5e9545cca37d26706700a1742cf25a61dc"
