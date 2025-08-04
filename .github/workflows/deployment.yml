@@ -1,8 +1,9 @@
 name: Continuous Deployment
 
 on:
-  check_suite:
-    types: [completed]
+  push:
+    tags:
+      - "v*"
   workflow_dispatch:
 
 concurrency:
@@ -11,8 +12,6 @@ concurrency:
 
 jobs:
   deployment:
-    if: ${{ github.event.check_suite.conclusion == 'success'
-      && startsWith(github.ref, 'refs/tags/v') }}
     permissions:
       contents: read
     runs-on: ubuntu-latest
