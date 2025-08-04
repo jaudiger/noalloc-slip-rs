@@ -19,12 +19,11 @@ concurrency:
   group: audit-${{ github.ref_name }}
   cancel-in-progress: true
 
-permissions:
-  contents: read
-  checks: write
-
 jobs:
   audit:
+    permissions:
+      contents: read
+      checks: write
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
