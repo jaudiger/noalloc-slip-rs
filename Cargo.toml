@@ -6,7 +6,7 @@ edition = "2024"
 rust-version = "1.88"
 
 [dependencies]
-noalloc-vec-rs = { git = "https://github.com/jaudiger/noalloc-vec-rs.git", rev = "69b78d5e9545cca37d26706700a1742cf25a61dc" }
+noalloc-vec-rs = { git = "https://github.com/jaudiger/noalloc-vec-rs.git", rev = "a6bafb89f6e3901cfbdb96ee6115a8e5c47331ff" }
 
 [lints.clippy]
 all = { level = "warn", priority = -1 }
