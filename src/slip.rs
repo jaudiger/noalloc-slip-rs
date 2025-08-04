@@ -1,10 +1,3 @@
-/*
- *
- * Copyright (c) 2025.
- * All rights reserved.
- *
- */
-
 use core::ops::Deref;
 
 use noalloc_vec_rs::vec::Vec;

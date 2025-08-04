@@ -1,9 +1,17 @@
 [package]
 name = "noalloc-slip-rs"
+license = "Apache-2.0"
 version = "0.1.0"
 authors = ["Jérémy Audiger", "Kamel Azira"]
 edition = "2024"
 rust-version = "1.88"
+readme = "README.md"
+repository = "https://github.com/jaudiger/noalloc-slip-rs"
+description = """
+A no-std SLIP (Serial Line Internet Protocol) encoder and decoder implementation.
+"""
+categories = ["no-std"]
+keywords = ["static", "no-heap"]
 
 [dependencies]
 noalloc-vec-rs = { git = "https://github.com/jaudiger/noalloc-vec-rs.git", rev = "a6bafb89f6e3901cfbdb96ee6115a8e5c47331ff" }
