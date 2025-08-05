@@ -12,4 +12,5 @@ dependencies = [
 [[package]]
 name = "noalloc-vec-rs"
 version = "0.1.0"
-source = "git+https://github.com/jaudiger/noalloc-vec-rs.git?rev=a6bafb89f6e3901cfbdb96ee6115a8e5c47331ff#a6bafb89f6e3901cfbdb96ee6115a8e5c47331ff"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "3a7941c19388720fc3e407f40429bebb8ad5e3b867dee101159d1e813a414f9d"
