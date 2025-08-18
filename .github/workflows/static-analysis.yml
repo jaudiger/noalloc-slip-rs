@@ -13,10 +13,10 @@ jobs:
   static-analysis:
     runs-on: ubuntu-latest
     strategy:
+      fail-fast: false
       matrix:
         toolchain: [stable, nightly]
-      continue-on-error: ${{ matrix.toolchain == 'nightly' }}
-      fail-fast: false
+    continue-on-error: ${{ matrix.toolchain == 'nightly' }}
     steps:
       - name: Checkout
         uses: actions/checkout@v5.0.0
