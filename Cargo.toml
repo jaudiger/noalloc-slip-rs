@@ -14,7 +14,7 @@ categories = ["no-std"]
 keywords = ["static", "no-heap"]
 
 [dependencies]
-noalloc-vec-rs = "0.1.0"
+noalloc-vec-rs = "0.1.1"
 
 [lints.clippy]
 all = { level = "warn", priority = -1 }
