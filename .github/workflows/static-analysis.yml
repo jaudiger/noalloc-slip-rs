@@ -2,7 +2,17 @@ name: Continuous Integration - Static Analysis
 
 on:
   push:
+    paths:
+      - ".github/workflows/static-analysis.yml"
+      - "**/Cargo.toml"
+      - "**/Cargo.lock"
+      - "**/*.rs"
   pull_request:
+    paths:
+      - ".github/workflows/static-analysis.yml"
+      - "**/Cargo.toml"
+      - "**/Cargo.lock"
+      - "**/*.rs"
   workflow_dispatch:
 
 concurrency:
