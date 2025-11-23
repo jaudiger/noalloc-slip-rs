@@ -37,7 +37,7 @@ jobs:
           components: llvm-tools-preview
 
       - name: Install Brioche
-        uses: brioche-dev/setup-brioche@v1.4.1
+        uses: brioche-dev/setup-brioche@v1.5.0
 
       - name: Install cargo-llvm-cov
         run: brioche install -r cargo_llvm_cov
