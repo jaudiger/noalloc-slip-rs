@@ -1,10 +1,10 @@
 [package]
 name = "noalloc-slip-rs"
 license = "Apache-2.0"
-version = "0.1.1"
+version = "0.1.2"
 authors = ["Jérémy Audiger", "Kamel Azira"]
 edition = "2024"
-rust-version = "1.91"
+rust-version = "1.93"
 readme = "README.md"
 repository = "https://github.com/jaudiger/noalloc-slip-rs"
 description = """
@@ -14,7 +14,7 @@ categories = ["no-std"]
 keywords = ["static", "no-heap"]
 
 [dependencies]
-noalloc-vec-rs = "0.1.1"
+noalloc-vec-rs = "0.1.2"
 
 [lints.clippy]
 all = { level = "warn", priority = -1 }
