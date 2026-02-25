@@ -1,6 +1,6 @@
 # No-allocation SLIP
 
-## Instructions
+## Getting Started
 
 This Rust crate provides a no-std SLIP (Serial Line Internet Protocol) encoder and decoder implementation. SLIP is a simple protocol for sending packets over serial lines.
 
@@ -38,18 +38,3 @@ decoder.insert(END_CHAR).unwrap();
 assert!(decoder.is_buffer_completed());
 assert_eq!(decoder.get_buffer(), &[0x00]);
 ```
-
-## CI / CD
-
-The CI/CD pipeline is configured using GitHub Actions. The workflow is defined in the [`.github/workflows`](.github/workflows) folder:
-
-- Static Analysis (source code, GitHub Actions)
-- Tests (unit tests with code coverage generated)
-- Code Audit (on each Cargo dependencies update, or run each day through CronJob)
-- Deployment
-
-Additionally, Dependabot is configured to automatically update dependencies (GitHub Actions, Cargo dependencies).
-
-## Repository configuration
-
-The settings of this repository are managed from the [gitops-deployments](https://github.com/jaudiger/gitops-deployments) repository using Terraform. The actual configuration applied is located in the Terraform module [`modules/github-repository`](https://github.com/jaudiger/gitops-deployments/tree/main/modules/github-repository).
