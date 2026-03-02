@@ -61,7 +61,7 @@ jobs:
           cargo llvm-cov --workspace --all-features --cobertura --output-path ${{ env.CODE_COVERAGE_REPORT_FOLDER }}/${{ env.CODE_COVERAGE_REPORT_FILE }}
 
       - name: Upload coverage artifacts
-        uses: actions/upload-artifact@v6.0.0
+        uses: actions/upload-artifact@v7.0.0
         with:
           name: coverage
           path: |
