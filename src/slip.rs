@@ -2,9 +2,16 @@ use core::ops::Deref;
 
 use noalloc_vec_rs::vec::Vec;
 
+/// Marks the start and end of a SLIP frame.
 pub const END_CHAR: u8 = 0xC0;
+
+/// Signals that the next byte is an escaped special byte.
 pub const ESC_CHAR: u8 = 0xDB;
+
+/// Escaped representation of `END_CHAR` inside a frame.
 pub const ESC_END_CHAR: u8 = 0xDC;
+
+/// Escaped representation of `ESC_CHAR` inside a frame.
 pub const ESC_ESC_CHAR: u8 = 0xDD;
 
 /// A SLIP encoder.
@@ -13,17 +20,9 @@ pub const ESC_ESC_CHAR: u8 = 0xDD;
 pub struct SlipEncoder;
 
 impl SlipEncoder {
-    /// Takes a reference to a Vec and encodes it in place.
-    /// The Vec must have enough capacity to hold the encoded packet.
+    /// Encodes `vec` in place as a SLIP frame.
     ///
-    /// # Arguments
-    ///
-    /// * `vec` - A reference to a Vec containing the packet to encode.
-    ///
-    /// # Returns
-    ///
-    /// * `Ok(())` if the packet was encoded successfully.
-    /// * `Err(())` if the packet could not be encoded.
+    /// Returns `Ok(())` on success, or `Err(())` if `vec` lacks capacity for the framing overhead.
     #[allow(clippy::result_unit_err)]
     pub fn encode<const MAX_LENGTH: usize>(vec: &mut Vec<u8, MAX_LENGTH>) -> Result<(), ()> {
         // Begin the SLIP frame
@@ -58,14 +57,14 @@ impl SlipEncoder {
 /// The state of the SLIP decoder.
 #[derive(Debug, Default, PartialEq)]
 enum SlipDecoderState {
-    /// The decoder is waiting for the start of a packet.
+    /// Waiting for the opening `END_CHAR` of a frame.
     #[default]
     Start,
-    /// The decoder has reached the end of a packet.
+    /// Received the closing `END_CHAR`; frame is complete.
     End,
-    /// The decoder is appending bytes to the packet.
+    /// Accumulating payload bytes.
     Append,
-    /// The decoder has encountered an escape character.
+    /// Received `ESC_CHAR`; next byte is an escaped value.
     Escape,
 }
 
@@ -74,23 +73,14 @@ enum SlipDecoderState {
 /// This struct provides methods to decode a packet using the SLIP protocol.
 #[derive(Default)]
 pub struct SlipDecoder<const MAX_LENGTH: usize> {
-    /// The current state of the decoder.
     state: SlipDecoderState,
-    /// The buffer containing the decoded packet.
     buffer: Vec<u8, MAX_LENGTH>,
 }
 
 impl<const MAX_LENGTH: usize> SlipDecoder<MAX_LENGTH> {
-    /// Takes a byte and inserts it into the decoder.
+    /// Feeds `value` into the decoder state machine.
     ///
-    /// # Arguments
-    ///
-    /// * `value` - The byte to insert.
-    ///
-    /// # Returns
-    ///
-    /// * `Ok(())` if the byte was inserted successfully.
-    /// * `Err(value)` if the byte could not be inserted.
+    /// Returns `Ok(())` on success, or `Err(value)` if the byte is unexpected or the buffer is full.
     #[allow(clippy::result_unit_err)]
     pub fn insert(&mut self, value: u8) -> Result<(), u8> {
         match self.state {
@@ -143,32 +133,26 @@ impl<const MAX_LENGTH: usize> SlipDecoder<MAX_LENGTH> {
         self.buffer.clear();
     }
 
-    /// Returns true if the decoder has reached the end of a packet.
-    ///
-    /// # Returns
-    ///
-    /// * `true` if the buffer is completed.
-    /// * `false` otherwise.
+    /// Returns `true` if the decoder has received a complete SLIP frame.
     #[must_use]
     pub fn is_buffer_completed(&self) -> bool {
         self.state == SlipDecoderState::End
     }
 
-    /// Returns a reference to the buffer containing the decoded packet.
-    ///
-    /// # Returns
-    ///
-    /// * A reference to the buffer.
+    /// Returns a slice of the decoded bytes accumulated so far.
     #[must_use]
     pub const fn get_buffer(&self) -> &[u8] {
         self.buffer.as_slice()
     }
 }
 
-/// Deref to get the internal buffer.
+/// Implementation of `Deref` for `SlipDecoder`.
+///
+/// This allows treating a `SlipDecoder` as a byte slice of the decoded buffer.
 impl<const MAX_LENGTH: usize> Deref for SlipDecoder<MAX_LENGTH> {
     type Target = [u8];
 
+    /// Dereferences to the decoded buffer slice.
     fn deref(&self) -> &Self::Target {
         self.get_buffer()
     }
