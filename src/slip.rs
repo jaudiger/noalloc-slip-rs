@@ -27,19 +27,19 @@ impl SlipEncoder {
     #[allow(clippy::result_unit_err)]
     pub fn encode<const MAX_LENGTH: usize>(vec: &mut Vec<u8, MAX_LENGTH>) -> Result<(), ()> {
         // Begin the SLIP frame
-        vec.insert(0, END_CHAR)?;
+        vec.insert(0, END_CHAR).map_err(|_| ())?;
 
         let mut index = 1;
         while index < vec.len() {
             match vec[index] {
                 END_CHAR => {
-                    vec.insert(index, ESC_CHAR)?;
-                    vec.write(index + 1, ESC_END_CHAR)?;
+                    vec.insert(index, ESC_CHAR).map_err(|_| ())?;
+                    vec.write(index + 1, ESC_END_CHAR).map_err(|_| ())?;
                     index += 2;
                 }
                 ESC_CHAR => {
-                    vec.insert(index, ESC_CHAR)?;
-                    vec.write(index + 1, ESC_ESC_CHAR)?;
+                    vec.insert(index, ESC_CHAR).map_err(|_| ())?;
+                    vec.write(index + 1, ESC_ESC_CHAR).map_err(|_| ())?;
                     index += 2;
                 }
                 _ => {
@@ -49,7 +49,7 @@ impl SlipEncoder {
         }
 
         // End the SLIP frame
-        vec.insert(vec.len(), END_CHAR)?;
+        vec.insert(vec.len(), END_CHAR).map_err(|_| ())?;
 
         Ok(())
     }
@@ -90,9 +90,9 @@ impl<const MAX_LENGTH: usize> SlipDecoder<MAX_LENGTH> {
     /// # Returns
     ///
     /// * `Ok(())` if the byte was inserted successfully.
-    /// * `Err(())` if the byte could not be inserted.
+    /// * `Err(value)` if the byte could not be inserted.
     #[allow(clippy::result_unit_err)]
-    pub fn insert(&mut self, value: u8) -> Result<(), ()> {
+    pub fn insert(&mut self, value: u8) -> Result<(), u8> {
         match self.state {
             SlipDecoderState::Start => {
                 if value == END_CHAR {
@@ -130,10 +130,10 @@ impl<const MAX_LENGTH: usize> SlipDecoder<MAX_LENGTH> {
 
                         Ok(())
                     }
-                    _ => Err(()),
+                    _ => Err(value),
                 }
             }
-            SlipDecoderState::End => Err(()),
+            SlipDecoderState::End => Err(value),
         }
     }
 
