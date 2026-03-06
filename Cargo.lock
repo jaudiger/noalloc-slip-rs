@@ -4,7 +4,7 @@ version = 4
 
 [[package]]
 name = "noalloc-slip-rs"
-version = "0.1.2"
+version = "0.2.0"
 dependencies = [
  "noalloc-vec-rs",
 ]
