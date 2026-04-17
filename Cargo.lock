@@ -4,13 +4,13 @@ version = 4
 
 [[package]]
 name = "noalloc-slip-rs"
-version = "0.2.0"
+version = "0.2.1"
 dependencies = [
  "noalloc-vec-rs",
 ]
 
 [[package]]
 name = "noalloc-vec-rs"
-version = "0.2.0"
+version = "0.2.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "17f79c6dedfcd6c29b9cb6c08dbcc52c953f10704bdc69d8d438f1a715d6e284"
+checksum = "7940b77ffb2d54f149095d6cf89e031975d56757c273ed7e339d4d6c0b0dbaf7"
