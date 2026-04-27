@@ -1,22 +1,22 @@
-name: Continuous Integration - Tests
+name: Continuous Integration - Tests (Rust)
 
 on:
   push:
     paths:
-      - ".github/workflows/tests.yml"
+      - ".github/workflows/tests-rust.yml"
       - "**/Cargo.toml"
       - "**/Cargo.lock"
       - "**/*.rs"
   pull_request:
     paths:
-      - ".github/workflows/tests.yml"
+      - ".github/workflows/tests-rust.yml"
       - "**/Cargo.toml"
       - "**/Cargo.lock"
       - "**/*.rs"
   workflow_dispatch:
 
 concurrency:
-  group: tests-${{ github.ref_name }}
+  group: tests-rust-${{ github.ref_name }}
   cancel-in-progress: true
 
 env:
@@ -53,7 +53,7 @@ jobs:
             ~/.cargo/registry/cache
             ~/.cargo/registry/index
             target
-          key: unit-tests-${{ hashFiles('**/Cargo.lock') }}
+          key: rust-unit-tests-${{ hashFiles('**/Cargo.lock') }}
 
       - name: Run tests and generate coverage reports
         run: |
