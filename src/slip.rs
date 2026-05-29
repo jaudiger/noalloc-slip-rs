@@ -175,7 +175,7 @@ mod tests {
 
         let result = SlipEncoder::encode(&mut array);
 
-        assert!(result.is_ok());
+        assert_eq!(result, Ok(()));
         assert_eq!(*array, [END_CHAR, 0x00, 0x01, 0x02, 0x03, END_CHAR]);
     }
 
@@ -185,7 +185,7 @@ mod tests {
 
         let result = SlipEncoder::encode(&mut array);
 
-        assert!(result.is_ok());
+        assert_eq!(result, Ok(()));
         assert_eq!(*array, [END_CHAR, END_CHAR]);
     }
 
@@ -195,7 +195,7 @@ mod tests {
 
         let result = SlipEncoder::encode(&mut array);
 
-        assert!(result.is_ok());
+        assert_eq!(result, Ok(()));
         assert_eq!(
             *array,
             [
@@ -218,15 +218,15 @@ mod tests {
         assert_eq!(slip_decoder.state, SlipDecoderState::Start);
 
         let result = slip_decoder.insert(END_CHAR);
-        assert!(result.is_ok());
+        assert_eq!(result, Ok(()));
         assert_eq!(slip_decoder.state, SlipDecoderState::Append);
 
         let result = slip_decoder.insert(0x00);
-        assert!(result.is_ok());
+        assert_eq!(result, Ok(()));
         assert_eq!(slip_decoder.state, SlipDecoderState::Append);
 
         let result = slip_decoder.insert(END_CHAR);
-        assert!(result.is_ok());
+        assert_eq!(result, Ok(()));
         assert_eq!(slip_decoder.state, SlipDecoderState::End);
 
         assert!(slip_decoder.is_buffer_completed());
@@ -241,27 +241,27 @@ mod tests {
         assert_eq!(slip_decoder.state, SlipDecoderState::Start);
 
         let result = slip_decoder.insert(END_CHAR);
-        assert!(result.is_ok());
+        assert_eq!(result, Ok(()));
         assert_eq!(slip_decoder.state, SlipDecoderState::Append);
 
         let result = slip_decoder.insert(ESC_CHAR);
-        assert!(result.is_ok());
+        assert_eq!(result, Ok(()));
         assert_eq!(slip_decoder.state, SlipDecoderState::Escape);
 
         let result = slip_decoder.insert(ESC_END_CHAR);
-        assert!(result.is_ok());
+        assert_eq!(result, Ok(()));
         assert_eq!(slip_decoder.state, SlipDecoderState::Append);
 
         let result = slip_decoder.insert(ESC_CHAR);
-        assert!(result.is_ok());
+        assert_eq!(result, Ok(()));
         assert_eq!(slip_decoder.state, SlipDecoderState::Escape);
 
         let result = slip_decoder.insert(ESC_ESC_CHAR);
-        assert!(result.is_ok());
+        assert_eq!(result, Ok(()));
         assert_eq!(slip_decoder.state, SlipDecoderState::Append);
 
         let result = slip_decoder.insert(END_CHAR);
-        assert!(result.is_ok());
+        assert_eq!(result, Ok(()));
         assert_eq!(slip_decoder.state, SlipDecoderState::End);
 
         assert!(slip_decoder.is_buffer_completed());
@@ -276,15 +276,15 @@ mod tests {
         assert_eq!(slip_decoder.state, SlipDecoderState::Start);
 
         let result = slip_decoder.insert(END_CHAR);
-        assert!(result.is_ok());
+        assert_eq!(result, Ok(()));
         assert_eq!(slip_decoder.state, SlipDecoderState::Append);
 
         let result = slip_decoder.insert(ESC_CHAR);
-        assert!(result.is_ok());
+        assert_eq!(result, Ok(()));
         assert_eq!(slip_decoder.state, SlipDecoderState::Escape);
 
         let result = slip_decoder.insert(0x00);
-        assert!(result.is_err());
+        assert_eq!(result, Err(0x00));
     }
 
     #[test]
@@ -294,11 +294,11 @@ mod tests {
         assert_eq!(slip_decoder.state, SlipDecoderState::Start);
 
         let result = slip_decoder.insert(END_CHAR);
-        assert!(result.is_ok());
+        assert_eq!(result, Ok(()));
         assert_eq!(slip_decoder.state, SlipDecoderState::Append);
 
         let result = slip_decoder.insert(END_CHAR);
-        assert!(result.is_ok());
+        assert_eq!(result, Ok(()));
         assert_eq!(slip_decoder.state, SlipDecoderState::End);
 
         assert!(slip_decoder.is_buffer_completed());
@@ -313,15 +313,15 @@ mod tests {
         assert_eq!(slip_decoder.state, SlipDecoderState::Start);
 
         let result = slip_decoder.insert(END_CHAR);
-        assert!(result.is_ok());
+        assert_eq!(result, Ok(()));
         assert_eq!(slip_decoder.state, SlipDecoderState::Append);
 
         let result = slip_decoder.insert(0x00);
-        assert!(result.is_ok());
+        assert_eq!(result, Ok(()));
         assert_eq!(slip_decoder.state, SlipDecoderState::Append);
 
         let result = slip_decoder.insert(END_CHAR);
-        assert!(result.is_ok());
+        assert_eq!(result, Ok(()));
         assert_eq!(slip_decoder.state, SlipDecoderState::End);
 
         assert!(slip_decoder.is_buffer_completed());
@@ -340,14 +340,14 @@ mod tests {
         assert_eq!(slip_decoder.state, SlipDecoderState::Start);
 
         let result = slip_decoder.insert(END_CHAR);
-        assert!(result.is_ok());
+        assert_eq!(result, Ok(()));
         assert_eq!(slip_decoder.state, SlipDecoderState::Append);
 
         let result = slip_decoder.insert(0x00);
-        assert!(result.is_ok());
+        assert_eq!(result, Ok(()));
         assert_eq!(slip_decoder.state, SlipDecoderState::Append);
 
         let result = slip_decoder.insert(0x00);
-        assert!(result.is_err());
+        assert_eq!(result, Err(0x00));
     }
 }
